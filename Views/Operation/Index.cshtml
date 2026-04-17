@@ -1,0 +1,57 @@
+﻿@model IEnumerable<ProducOrder>
+@{
+    ViewData["Title"] = "Fila de Produção";
+    var raLogado = User.FindFirst("RA")?.Value;
+}
+
+@foreach (var os in Model)
+{
+    var statusClass = os.Status switch
+    {
+        "em_andamento" => "status-em_andamento",
+        "pausado" => "status-pausado",
+        "concluido" => "status-concluido",
+        _ => ""
+    };
+    <div class="card-producao @statusClass">
+        <div class="card-header">
+            <h3>@os.Peca</h3>
+            <small>OS: #@os.Id | Operador: @(os.Responsavel?.Nome ?? "Disponível")</small>
+        </div>
+        <div class="card-body">
+            <div class="drawing-zone">
+                @if (!string.IsNullOrEmpty(os.DesenhoURL))
+                {
+                    <img src="@os.DesenhoURL" />
+                }
+            </div>
+            <div class="info-zone">
+                <select class="status-select" onchange="mudarStatus(@os.Id, this.value)">
+                    <!option value="aguardando" selected="@(os.Status == "aguardando")">Aguardando</!option>
+                    <!option value="em_andamento" selected="@(os.Status == "em_andamento")">Em Execução</!option>
+                    <!option value="pausado" selected="@(os.Status == "pausado")">Pausado</!option>
+                    <!option value="concluido" selected="@(os.Status == "concluido")">Finalizado</!option>
+                </select>
+                <button class="btn-assumir" onclick="assumir(@os.Id)" disabled="@(os.ResponsavelRA != null)">Assumir</button>
+                <!-- Checklist e progresso renderizados via partial ou JS -->
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    function assumir(id) {
+        fetch('/Producao/Assumir', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `id=${id}`
+        }).then(() => location.reload());
+    }
+    function mudarStatus(id, status) {
+        fetch('/Producao/MudarStatus', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `id=${id}&novoStatus=${status}`
+        }).then(() => location.reload());
+    }
+</script>
