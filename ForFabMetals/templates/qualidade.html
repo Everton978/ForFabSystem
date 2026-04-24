@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qualidade - ForFabio</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #27ae60;
+            --blue: #2980b9;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --bg: #f4f7f6;
+            --white: #ffffff;
+            --accent: #f1c40f;
+        }
+
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); color: #333; }
+
+        /* NAVBAR PADRONIZADA FORFABIO */
+        .navbar {
+            background: #2c3e50;
+            color: white;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            min-height: 70px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .brand { font-size: 1.2rem; font-weight: bold; color: white; text-decoration: none; }
+        .brand span { color: #f1c40f; }
+
+        .nav-links { display: flex; gap: 5px; flex-wrap: wrap; }
+        .nav-links a { color: #ecf0f1; text-decoration: none; font-size: 13px; padding: 8px 12px; border-radius: 5px; transition: 0.3s; font-weight: 500; }
+        .nav-links a:hover { background: rgba(255, 255, 255, 0.1); color: #f1c40f; }
+        .nav-links a.ativo { background: #f1c40f; color: #2c3e50 !important; font-weight: bold; }
+
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+
+        .header-quali { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-left: 6px solid var(--blue); padding-left: 15px; }
+        
+        .grid-quali { display: grid; grid-template-columns: 1fr 450px; gap: 20px; }
+
+        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        
+        h3 { margin-top: 0; color: var(--primary); border-bottom: 2px solid #eee; padding-bottom: 10px; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th { background: #f8f9fa; color: #7f8c8d; padding: 12px; text-align: left; font-size: 12px; text-transform: uppercase; }
+        td { padding: 12px; border-bottom: 1px solid #eee; font-size: 13px; }
+
+        .btn-inspecionar { background: var(--blue); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 11px; }
+        .btn-inspecionar:hover { background: #217dbb; }
+        
+        .btn-view-eng { background: var(--primary); color: white; padding: 6px 10px; border-radius: 4px; text-decoration: none; font-size: 11px; font-weight: bold; display: inline-block;}
+
+        /* FORMULÁRIO DE LAUDO */
+        .form-laudo { display: flex; flex-direction: column; gap: 15px; }
+        .campo { display: flex; flex-direction: column; gap: 5px; }
+        .campo label { font-size: 11px; font-weight: bold; color: #7f8c8d; text-transform: uppercase; }
+        .campo input, .campo select, .campo textarea { padding: 10px; border: 1px solid #ddd; border-radius: 6px; outline: none; font-family: inherit; font-size: 13px;}
+        .campo input:read-only { background: #f9f9f9; color: #999; }
+        
+        .medidas-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; background: #fdfcf6; padding: 15px; border-radius: 8px; border-left: 4px solid var(--warning); }
+
+        .btn-laudar { background: var(--secondary); color: white; border: none; padding: 15px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px; transition: 0.3s; }
+        .btn-laudar:hover { background: #219a52; }
+
+        .laudo-reprovado { background: #fff5f5; border: 1px solid #feb2b2; padding: 15px; border-radius: 6px; display: none; }
+
+        .status-badge { padding: 5px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; text-transform: uppercase; }
+        .bg-ok { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .bg-nok { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .bg-ret { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+        .bg-pend { background: #e2e3e5; color: #383d41; }
+
+        @media (max-width: 900px) { .grid-quali { grid-template-columns: 1fr; } }
+        @media (max-width: 850px) { .navbar { flex-direction: column; padding: 10px; } .nav-links { justify-content: center; width: 100%; margin-top: 10px; } table, thead, tbody, th, td, tr { display: block; } tr { margin-bottom: 15px; border: 1px solid #ddd; padding: 10px; border-radius: 8px; } }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="home.html" class="brand">For<span>Fabio</span> | Indústria 4.0</a>
+    <div class="nav-links">
+        <a href="home.html">Home</a><a href="pcp.html">PCP</a><a href="almoxarifado.html">Almox</a><a href="apontamento.html">Aponte</a><a href="producao.html">Prod</a><a href="engenharia.html">Eng</a><a href="qualidade.html" class="ativo">Quali</a><a href="gestao.html">Gestor</a>
+        <a href="#" onclick="logout()" style="color:#e74c3c; font-weight: bold;">Sair</a>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="header-quali">
+        <h2 style="margin: 0;">Controle de Qualidade (CQ) e Metrologia</h2>
+    </div>
+
+    <div class="grid-quali">
+        <div class="card" style="overflow-x: auto;">
+            <h3>🔍 Fila de Inspeção</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>OS</th>
+                        <th>Peça</th>
+                        <th>Operador</th>
+                        <th>Status Fábrica</th>
+                        <th>Projeto</th>
+                        <th>Ação</th>
+                    </tr>
+                </thead>
+                <tbody id="listaInspecao"></tbody>
+            </table>
+        </div>
+
+        <div class="card" id="painelLaudo" style="opacity: 0.5; pointer-events: none;">
+            <h3>📋 Emissão de Laudo Técnico</h3>
+            <div class="form-laudo">
+                <div style="display: flex; gap: 10px;">
+                    <div class="campo" style="flex: 1;">
+                        <label>OS</label>
+                        <input type="text" id="osAtual" readonly placeholder="...">
+                    </div>
+                    <div class="campo" style="flex: 2;">
+                        <label>Peça</label>
+                        <input type="text" id="pecaAtual" readonly>
+                    </div>
+                </div>
+
+                <div class="medidas-grid">
+                    <div class="campo">
+                        <label>Medida Especificada (Eng)</label>
+                        <input type="text" id="medidaDesenho" placeholder="Ex: Ø50.00 ±0.05">
+                    </div>
+                    <div class="campo">
+                        <label>Medida Encontrada (Real)</label>
+                        <input type="text" id="medidaReal" placeholder="Ex: Ø50.12">
+                    </div>
+                </div>
+
+                <div class="campo">
+                    <label>Parecer / Resultado da Inspeção</label>
+                    <select id="resultadoInspecao" onchange="verificarResultado()">
+                        <option value="">Selecione o Status...</option>
+                        <option value="APROVADO">✅ Aprovado (Conforme Especificado)</option>
+                        <option value="RETRABALHO">⚠️ Retrabalho (Devolver para a Máquina)</option>
+                        <option value="REPROVADO">❌ Reprovado / Sucata (Perda Total)</option>
+                    </select>
+                </div>
+                
+                <div class="laudo-reprovado" id="boxReprovado">
+                    <div class="campo">
+                        <label style="color: var(--danger);">Justificativa do Retrabalho ou Sucata</label>
+                        <textarea id="motivoReprovacao" rows="3" placeholder="Descreva o que ficou fora da cota..."></textarea>
+                    </div>
+                </div>
+
+                <button class="btn-laudar" id="btnSalvarLaudo" onclick="salvarLaudo()">Emitir Laudo Dimensional</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="card" style="margin-top: 20px;">
+        <h3>📁 Histórico de Inspeções e Laudos</h3>
+        <div style="overflow-x: auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>OS</th>
+                        <th>Peça</th>
+                        <th>Inspetor</th>
+                        <th>Dimensões (Especificado / Real)</th>
+                        <th>Resultado</th>
+                        <th>Observações</th>
+                    </tr>
+                </thead>
+                <tbody id="historicoLaudos"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+if (!localStorage.getItem('usuarioLogado')) { window.location.href = "login.html"; }
+const inspetorLogado = localStorage.getItem('nomeUsuarioLogado') || "Inspetor CQ";
+
+let indexOSSelecionada = -1;
+
+function carregarTabelas() {
+    const ordens = JSON.parse(localStorage.getItem('ordensProducao')) || [];
+    const laudos = JSON.parse(localStorage.getItem('laudosQualidade')) || [];
+    const tbodyInspecao = document.getElementById('listaInspecao');
+    const tbodyHistorico = document.getElementById('historicoLaudos');
+    
+    tbodyInspecao.innerHTML = "";
+    tbodyHistorico.innerHTML = "";
+
+    let temInspecao = false;
+
+    ordens.forEach((os, idx) => {
+        if (os.status === 'cancelado' || os.status === 'aguardando' || os.laudoEmitido) return;
+
+        temInspecao = true;
+        let btnDesenho = os.link ? `<a href="${os.link}" target="_blank" class="btn-view-eng">📐 Ver Cotas</a>` : "-";
+        
+        tbodyInspecao.innerHTML += `
+            <tr>
+                <td><strong>${os.id}</strong></td>
+                <td>${os.nome}</td>
+                <td>${os.operador || 'N/A'}</td>
+                <td><span class="status-badge bg-pend">${os.status.replace("_", " ").toUpperCase()}</span></td>
+                <td>${btnDesenho}</td>
+                <td><button class="btn-inspecionar" onclick="abrirLaudo(${idx})">Inspecionar</button></td>
+            </tr>
+        `;
+    });
+
+    if (!temInspecao) {
+        tbodyInspecao.innerHTML = "<tr><td colspan='6' style='text-align:center;'>Nenhuma peça aguardando inspeção no momento.</td></tr>";
+    }
+
+    if (laudos.length === 0) {
+        tbodyHistorico.innerHTML = "<tr><td colspan='7' style='text-align:center;'>Nenhum laudo emitido ainda.</td></tr>";
+    } else {
+        laudos.slice().reverse().forEach(laudo => {
+            let badge = laudo.resultado === 'APROVADO' ? '<span class="status-badge bg-ok">APROVADO</span>' : 
+                        (laudo.resultado === 'RETRABALHO' ? '<span class="status-badge bg-ret">RETRABALHO</span>' : 
+                        '<span class="status-badge bg-nok">SUCATA</span>');
+            
+            let colorReal = laudo.resultado === 'APROVADO' ? 'var(--secondary)' : 'var(--danger)';
+
+            tbodyHistorico.innerHTML += `
+                <tr>
+                    <td>${laudo.data}</td>
+                    <td><strong>${laudo.osId}</strong></td>
+                    <td>${laudo.peca}</td>
+                    <td>${laudo.inspetor}</td>
+                    <td style="font-family: monospace; font-size:12px;">
+                        Esp: ${laudo.medidaDesenho}<br>
+                        Real: <strong style="color: ${colorReal}">${laudo.medidaReal}</strong>
+                    </td>
+                    <td>${badge}</td>
+                    <td style="color:#e74c3c; font-size:11px; max-width:150px;">${laudo.obs || '-'}</td>
+                </tr>
+            `;
+        });
+    }
+}
+
+function abrirLaudo(idx) {
+    const ordens = JSON.parse(localStorage.getItem('ordensProducao')) || [];
+    const os = ordens[idx];
+    
+    indexOSSelecionada = idx;
+    
+    document.getElementById('osAtual').value = os.id;
+    document.getElementById('pecaAtual').value = os.nome;
+    document.getElementById('medidaDesenho').value = "";
+    document.getElementById('medidaReal').value = "";
+    document.getElementById('resultadoInspecao').value = "";
+    document.getElementById('motivoReprovacao').value = "";
+    document.getElementById('boxReprovado').style.display = "none";
+    
+    const painel = document.getElementById('painelLaudo');
+    painel.style.opacity = "1";
+    painel.style.pointerEvents = "auto";
+    document.getElementById('medidaDesenho').focus();
+}
+
+function verificarResultado() {
+    const res = document.getElementById('resultadoInspecao').value;
+    document.getElementById('boxReprovado').style.display = (res === "REPROVADO" || res === "RETRABALHO") ? "block" : "none";
+}
+
+function salvarLaudo() {
+    if (indexOSSelecionada === -1) return alert("Selecione uma OS para inspecionar!");
+    
+    const resultado = document.getElementById('resultadoInspecao').value;
+    const motivo = document.getElementById('motivoReprovacao').value;
+    const medidaDesenho = document.getElementById('medidaDesenho').value;
+    const medidaReal = document.getElementById('medidaReal').value;
+
+    if (!medidaDesenho || !medidaReal) return alert("Preencha a medida especificada do projeto e a medida real encontrada!");
+    if (!resultado) return alert("Selecione o resultado da inspeção.");
+    if ((resultado === "REPROVADO" || resultado === "RETRABALHO") && !motivo) {
+        return alert("É obrigatório informar a justificativa do desvio para retrabalhos ou sucatas.");
+    }
+
+    let ordens = JSON.parse(localStorage.getItem('ordensProducao')) || [];
+    let laudos = JSON.parse(localStorage.getItem('laudosQualidade')) || [];
+    let apontamentos = JSON.parse(localStorage.getItem('apontamentos')) || []; 
+
+    const os = ordens[indexOSSelecionada];
+
+    laudos.push({
+        osId: os.id,
+        peca: os.nome,
+        resultado: resultado,
+        medidaDesenho: medidaDesenho,
+        medidaReal: medidaReal,
+        obs: motivo,
+        inspetor: inspetorLogado,
+        data: new Date().toLocaleString('pt-BR')
+    });
+
+    if (resultado === "APROVADO") {
+        ordens[indexOSSelecionada].laudoEmitido = true;
+        ordens[indexOSSelecionada].status = "concluido";
+        ordens[indexOSSelecionada].alertaCQ = ""; // Limpa qualquer alerta antigo
+        alert("Laudo emitido! Peça Aprovada e finalizada.");
+    } 
+    else if (resultado === "REPROVADO") {
+        ordens[indexOSSelecionada].laudoEmitido = true;
+        ordens[indexOSSelecionada].status = "cancelado"; 
+        
+        apontamentos.push({
+            data: new Date().toLocaleDateString('pt-BR'),
+            ra: "CQ-SISTEMA", nome: "Qualidade - Alerta de Sucata",
+            descricao: `Peça reprovada em definitivo na OS ${os.id} (${os.nome}).`,
+            tempo: "0", status: "cancelado", desvio: "sim",
+            justificativa: `[SUCATA]: Medida Real ${medidaReal} (Projeto: ${medidaDesenho}). Motivo: ${motivo} | Operador: ${os.operador}`
+        });
+        alert("Laudo de Sucata emitido! A peça foi descartada e o Gestor foi notificado.");
+    }
+    else if (resultado === "RETRABALHO") {
+        // 🔴 MÁGICA AQUI: Salva o alerta dentro da Ordem de Produção!
+        ordens[indexOSSelecionada].status = "em_andamento";
+        ordens[indexOSSelecionada].laudoEmitido = false; 
+        ordens[indexOSSelecionada].progresso = 0;
+        ordens[indexOSSelecionada].alertaCQ = `Medida Encontrada: ${medidaReal} (Esperado: ${medidaDesenho}). Correção: ${motivo}`;
+        
+        if(ordens[indexOSSelecionada].tarefas) {
+            ordens[indexOSSelecionada].tarefas.forEach(t => t.concluida = false);
+        }
+
+        apontamentos.push({
+            data: new Date().toLocaleDateString('pt-BR'),
+            ra: "CQ-SISTEMA", nome: "Qualidade - Alerta de Retrabalho",
+            descricao: `Retrabalho exigido na OS ${os.id} (${os.nome}).`,
+            tempo: "0", status: "em_andamento", desvio: "sim",
+            justificativa: `[RETRABALHO NA MÁQUINA]: Medida Real ${medidaReal} (Projeto: ${medidaDesenho}). Correção necessária: ${motivo}`
+        });
+        alert("Laudo emitido! A peça foi devolvida para a tela da Produção para retrabalho imediato.");
+    }
+
+    localStorage.setItem('laudosQualidade', JSON.stringify(laudos));
+    localStorage.setItem('ordensProducao', JSON.stringify(ordens));
+    localStorage.setItem('apontamentos', JSON.stringify(apontamentos));
+
+    document.getElementById('painelLaudo').style.opacity = "0.5";
+    document.getElementById('painelLaudo').style.pointerEvents = "none";
+    indexOSSelecionada = -1;
+    carregarTabelas();
+}
+
+function logout() {
+    if (confirm("Deseja sair do sistema?")) {
+        localStorage.clear(); window.location.href = "login.html";
+    }
+}
+
+function marcarAbaAtiva() {
+    const path = window.location.pathname.split("/").pop() || "home.html";
+    document.querySelectorAll(".nav-links a").forEach(l => {
+        if (l.getAttribute("href") === path) l.classList.add("ativo");
+    });
+}
+
+window.addEventListener("load", () => {
+    marcarAbaAtiva();
+    carregarTabelas();
+});
+</script>
+</body>
+</html>

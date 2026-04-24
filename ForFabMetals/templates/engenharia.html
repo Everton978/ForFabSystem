@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Engenharia - ForFabio</title>
+<style>
+    :root { --primary: #2c3e50; --secondary: #27ae60; --orange: #e67e22; --blue: #2980b9; --danger: #e74c3c; --bg: #f4f7f6; --white: #ffffff; --accent: #f1c40f; }
+    body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--bg); }
+    .navbar { background: #2c3e50; color: white; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; min-height: 70px; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+    .brand { font-size: 1.2rem; font-weight: bold; color: white; text-decoration: none; }
+    .brand span { color: #f1c40f; }
+    .nav-links { display: flex; gap: 5px; flex-wrap: wrap; }
+    .nav-links a { color: #ecf0f1; text-decoration: none; font-size: 13px; padding: 8px 12px; border-radius: 5px; transition: 0.3s; font-weight: 500; }
+    .nav-links a:hover { background: rgba(255, 255, 255, 0.1); color: #f1c40f; }
+    .nav-links a.ativo { background: #f1c40f; color: #2c3e50 !important; font-weight: bold; }
+    .container { max-width: 1100px; margin: 25px auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); width: 95%; }
+    h2 { border-left: 5px solid var(--orange); padding-left: 10px; color: var(--primary); }
+    .upload-section { background: #fff5eb; padding: 20px; border-radius: 10px; border: 1px dashed var(--orange); margin-bottom: 25px; }
+    .grid-eng { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 15px; align-items: end;}
+    .campo { display: flex; flex-direction: column; gap: 5px; }
+    label { font-size: 11px; font-weight: bold; color: #7f8c8d; text-transform: uppercase; }
+    input, select { padding: 10px; border: 1px solid #ddd; border-radius: 6px; }
+    button { margin-top: 15px; background: var(--orange); color: white; padding: 12px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; transition: 0.3s; }
+    button:hover { background: #d35400; }
+    .btn-cancelar { background: #95a5a6 !important; margin-top: 10px; display: none; }
+    .btn-cancelar:hover { background: #7f8c8d !important; }
+    .table-container { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; }
+    th { background: #f1f1f1; padding: 12px; text-align: left; font-size: 12px; text-transform: uppercase;}
+    td { padding: 12px; border-bottom: 1px solid #eee; font-size: 13px; }
+    .badge { padding: 5px 12px; border-radius: 20px; font-size: 10px; font-weight: bold; text-transform: uppercase;}
+    .pendente { background: #f1c40f; color: #2c3e50; }
+    .aprovado { background: #27ae60; color: white; }
+    .rejeitado { background: #e74c3c; color: white; }
+    .btn-link { background: var(--blue); color: white; padding: 5px 10px; border-radius: 5px; text-decoration: none; font-size: 11px; display: inline-block; margin-top: 5px; font-weight: bold;}
+    @media (max-width: 850px) { .navbar { flex-direction: column; padding: 10px; } .nav-links { justify-content: center; width: 100%; margin-top: 10px; } table, thead { display: none; } #lista { display: flex; flex-direction: column; gap: 15px; } .card { background: white; padding: 15px; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.1); border-left: 5px solid var(--orange); } .linha { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px; align-items: center;} }
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="home.html" class="brand">For<span>Fabio</span> | Indústria 4.0</a>
+    <div class="nav-links">
+        <a href="home.html">Home</a><a href="pcp.html">PCP</a><a href="almoxarifado.html">Almox</a><a href="apontamento.html">Aponte</a><a href="producao.html">Prod</a><a href="engenharia.html" class="ativo">Eng</a><a href="qualidade.html">Quali</a><a href="gestao.html">Gestor</a>
+        <a href="#" onclick="logout()" style="color:#e74c3c; font-weight: bold;">Sair</a>
+    </div>
+</nav>
+
+<div class="container">
+    <h2>Repositório de Desenhos Técnicos</h2>
+
+    <div class="upload-section">
+        <div class="grid-eng">
+            <div class="campo">
+                <label style="color: var(--orange);">Conjunto / Projeto Pai</label>
+                <input id="conjunto" placeholder="Ex: Mancal Frontal" style="border: 2px solid var(--orange);">
+            </div>
+            <div class="campo"><label>Peça</label><input id="peca" placeholder="Ex: Eixo Principal"></div>
+            <div class="campo"><label>Rev</label><input id="rev" placeholder="Ex: A"></div>
+            <div class="campo"><label>Autor</label><input id="autor" readonly></div>
+        </div>
+
+        <div class="grid-eng">
+            <div class="campo"><label>Tipo</label><select id="tipo"><option>PDF</option><option>DWG</option><option>3D</option><option>IMG</option><option>LINK</option></select></div>
+            <div class="campo"><label>Matéria-Prima Sugerida</label><input id="material" placeholder="Ex: Aço 1020"></div>
+            <div class="campo"><label>Arquivo (Até 2MB)</label><input type="file" id="arquivo" accept=".pdf,image/*"></div>
+            <div class="campo"><label>Ou Link (URL)</label><input id="link" placeholder="https://..."></div>
+        </div>
+
+        <button id="btn-salvar" onclick="processarEnvio()">📤 Enviar para Aprovação do Gestor</button>
+        <button id="btn-cancelar" class="btn-cancelar" onclick="cancelarEdicao()">❌ Cancelar Edição</button>
+    </div>
+
+    <h3>Projetos da Engenharia</h3>
+    <div class="table-container">
+        <table>
+            <thead><tr><th>Conjunto</th><th>Peça / Rev</th><th>Material</th><th>Status Gestor</th><th>Ação / Arquivo</th></tr></thead>
+            <tbody id="lista"></tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+if (!localStorage.getItem('usuarioLogado')) { window.location.href = "login.html"; }
+document.getElementById('autor').value = localStorage.getItem('nomeUsuarioLogado') || "Engenheiro";
+
+let desenhos = JSON.parse(localStorage.getItem("desenhos")) || [];
+let indexEdicao = -1;
+
+function processarEnvio() {
+    const fileInput = document.getElementById("arquivo");
+    const file = fileInput.files.length > 0 ? fileInput.files[0] : null;
+
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) { salvar(e.target.result, file.name); };
+        reader.readAsDataURL(file);
+    } else {
+        salvar(null, null); 
+    }
+}
+
+function salvar(arquivoBase64, arquivoNome) {
+    const conjunto = document.getElementById("conjunto").value || "Peças Avulsas";
+    const peca = document.getElementById("peca").value;
+    const rev = document.getElementById("rev").value;
+    const tipo = document.getElementById("tipo").value;
+    const link = document.getElementById("link").value;
+    const material = document.getElementById("material").value;
+
+    if (!peca || !rev) return alert("Preencha Peça e Revisão!");
+    if (!arquivoBase64 && !link && indexEdicao === -1) return alert("Envie um arquivo ou cole um link!");
+
+    if (indexEdicao >= 0) {
+        desenhos[indexEdicao].conjunto = conjunto;
+        desenhos[indexEdicao].rev = rev;
+        desenhos[indexEdicao].tipo = tipo;
+        desenhos[indexEdicao].material = material || "Não informado";
+        if (link) desenhos[indexEdicao].link = link;
+        if (arquivoBase64) { desenhos[indexEdicao].arquivoBase64 = arquivoBase64; desenhos[indexEdicao].arquivoNome = arquivoNome; }
+        desenhos[indexEdicao].statusAprovacao = "PENDENTE";
+        desenhos[indexEdicao].obsGestor = "";
+        desenhos[indexEdicao].data = new Date().toLocaleDateString('pt-BR');
+        alert("Nova revisão enviada com sucesso!");
+    } else {
+        desenhos.push({
+            id: new Date().getTime(),
+            conjunto: conjunto,
+            peca, rev, tipo,
+            link: link || null,
+            arquivoBase64: arquivoBase64,
+            arquivoNome: arquivoNome,
+            material: material || "Não informado",
+            autor: document.getElementById("autor").value,
+            statusAprovacao: "PENDENTE",
+            obsGestor: "",
+            data: new Date().toLocaleDateString('pt-BR')
+        });
+        alert("Desenho enviado para aprovação!");
+    }
+
+    try {
+        localStorage.setItem("desenhos", JSON.stringify(desenhos));
+        cancelarEdicao();
+        render();
+    } catch(e) {
+        alert("O arquivo é muito grande. Tente um PDF ou imagem menor.");
+    }
+}
+
+function prepararEdicao(idx) {
+    indexEdicao = idx;
+    const d = desenhos[idx];
+    document.getElementById("conjunto").value = d.conjunto || "";
+    document.getElementById("peca").value = d.peca;
+    document.getElementById("peca").readOnly = true;
+    document.getElementById("rev").value = d.rev;
+    document.getElementById("tipo").value = d.tipo;
+    document.getElementById("material").value = d.material;
+    document.getElementById("link").value = d.link || "";
+    document.getElementById("btn-salvar").innerHTML = "🔄 Reenviar Nova Revisão";
+    document.getElementById("btn-cancelar").style.display = "block";
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function cancelarEdicao() {
+    indexEdicao = -1;
+    document.getElementById("peca").readOnly = false;
+    document.getElementById("btn-salvar").innerHTML = "📤 Enviar para Aprovação do Gestor";
+    document.getElementById("btn-cancelar").style.display = "none";
+    ["conjunto", "peca", "rev", "link", "material", "arquivo"].forEach(id => document.getElementById(id).value = "");
+}
+
+function render() {
+    const lista = document.getElementById("lista");
+    lista.innerHTML = "";
+    const isMobile = window.innerWidth <= 768;
+
+    for (let i = desenhos.length - 1; i >= 0; i--) {
+        let d = desenhos[i];
+        let classeBadge = d.statusAprovacao === 'APROVADO' ? 'aprovado' : (d.statusAprovacao === 'REJEITADO' ? 'rejeitado' : 'pendente');
+        
+        let btnAbrir = d.arquivoBase64 
+            ? `<a class="btn-link" href="${d.arquivoBase64}" target="_blank">📎 Abrir</a>` 
+            : (d.link ? `<a class="btn-link" href="${d.link}" target="_blank">🔗 Link</a>` : '-');
+
+        let btnCorrigir = d.statusAprovacao === 'REJEITADO' 
+            ? `<button class="btn-link" style="background:var(--orange); border:none; cursor:pointer;" onclick="prepararEdicao(${i})">✏️ Corrigir</button>` 
+            : '';
+
+        let obs = d.obsGestor ? `<div style="color:var(--danger); font-size:10px; margin-top:4px;">${d.obsGestor}</div>` : "";
+
+        if (isMobile) {
+            const card = document.createElement("div"); card.className = "card";
+            card.innerHTML = `<div class="linha"><strong style="color:var(--orange)">[${d.conjunto || 'Geral'}]</strong> ${d.peca} (Rev ${d.rev})</div>
+                <div class="linha">Status: <span class="badge ${classeBadge}">${d.statusAprovacao}</span></div> ${obs}
+                <div class="linha">${btnAbrir} ${btnCorrigir}</div>`;
+            lista.appendChild(card);
+        } else {
+            lista.innerHTML += `<tr>
+                <td><strong style="color:var(--orange)">${d.conjunto || 'Avulso'}</strong></td>
+                <td><strong>${d.peca}</strong> (Rev ${d.rev})</td>
+                <td>${d.material}</td>
+                <td><span class="badge ${classeBadge}">${d.statusAprovacao}</span> ${obs}</td>
+                <td>${btnAbrir} ${btnCorrigir}</td>
+            </tr>`;
+        }
+    }
+}
+
+function logout() { localStorage.removeItem("usuarioLogado"); window.location.href = "login.html"; }
+function marcarAbaAtiva() { const path = window.location.pathname.split("/").pop() || "home.html"; document.querySelectorAll(".nav-links a").forEach(l => { if(l.getAttribute("href")===path) l.classList.add("ativo"); }); }
+window.addEventListener("resize", render); window.addEventListener("load", marcarAbaAtiva); render();
+</script>
+</body>
+</html>
