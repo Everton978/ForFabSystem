@@ -2,6 +2,8 @@
 from django.urls import path
 from ForFabMetals import views as Fab_View
 
+app_name = 'ForFabMetals'
+
 '''
 urlpatterns = [
     path('ForFab/', Fab_View.login),
